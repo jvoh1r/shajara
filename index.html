@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family</title>
+
+    <style>
+        #tree {
+            margin-top: 20px;
+            padding: 10px;
+        }
+        .node {
+            margin-left: 40px;
+            margin-top: 10px;
+        }
+        .person {
+            font-weight: bold;
+            padding: 5px 10px;
+            background: #e7f6ff;
+            border: 1px solid #9ac9ff;
+            border-radius: 6px;
+            display: inline-block;
+            position: relative;
+        }
+        .delBtn {
+            margin-left: 10px;
+            padding: 2px 6px;
+            font-size: 12px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <form>
+        <input type="text" id="childName" placeholder="Ismni kiriting">
+        <input type="text" id="parentName" placeholder="Otasini kiriting (ixtiyoriy)">
+    </form>
+
+    <button onclick="addElement()">Kiritish</button>
+
+    <div id="tree"></div>
+
+    <script>
+        let lists = [
+            {name: "Qazoqov Olimboy", father: null},
+            {name: "Qazoqov Xudoshukur", father: "Qazoqov Olimboy"},
+            {name: "Olimboyev Javohir", father: "Qazoqov Xudoshukur"},
+        ];
+
+        function deletePerson(name) {
+            lists = lists.filter(p => p.name !== name && p.father !== name);
+            renderTree();
+        }
+
+        function renderTree() {
+            const container = document.getElementById("tree");
+            container.innerHTML = "";
+            treeLists(null, container);
+        }
+
+        function treeLists(father, container) {
+            lists
+                .filter(item => item.father === father)
+                .forEach(person => {
+                    let node = document.createElement("div");
+                    node.className = "node";
+
+                    node.innerHTML = `
+                        <div class="person">
+                            ${person.name}
+                            <button class="delBtn" onclick="deletePerson('${person.name}')">x</button>
+                        </div>
+                    `;
+
+                    container.appendChild(node);
+                    treeLists(person.name, node);
+                });
+        }
+
+        function addElement() {
+            let name = document.getElementById("childName").value.trim();
+            let father = document.getElementById("parentName").value.trim();
+
+            if (!name) {
+                alert("Ismni kiriting!");
+                return;
+            }
+
+            lists.push({
+                name: name,
+                father: father || null
+            });
+
+            document.getElementById("childName").value = "";
+            document.getElementById("parentName").value = "";
+
+            renderTree();
+        }
+
+        renderTree();
+    </script>
+
+</body>
+</html>
